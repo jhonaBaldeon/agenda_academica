@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "855737924458",
+    "project_id": "agenda-academica-13682",
+    "storage_bucket": "agenda-academica-13682.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:855737924458:android:385cf3ce5f585b81868313",
+        "android_client_info": {
+          "package_name": "com.example.agenda_academica_frontend"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "855737924458-2857dsag5knr3tlv58m9fgma4f64gv1m.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.agenda_academica_frontend",
+            "certificate_hash": "b67e991bfda27981662740bbdec88b39883b141b"
+          }
+        },
+        {
+          "client_id": "855737924458-ibkao13sdut2bs9bisr4bkctk7kdi99a.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDmr8sXgBq1cXqIfXkEG3a4ZpxTBpUTgw0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "855737924458-ibkao13sdut2bs9bisr4bkctk7kdi99a.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
