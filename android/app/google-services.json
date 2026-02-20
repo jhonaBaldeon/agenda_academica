@@ -22,13 +22,21 @@
           }
         },
         {
+          "client_id": "855737924458-80fphusmgpv8c5jvvmsc2s9d4pdud0qs.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.agenda_academica_frontend",
+            "certificate_hash": "c07ba3296ed5a88dd1aec39b458f07f656f84816"
+          }
+        },
+        {
           "client_id": "855737924458-ibkao13sdut2bs9bisr4bkctk7kdi99a.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDmr8sXgBq1cXqIfXkEG3a4ZpxTBpUTgw0"
+          "current_key": "AIzaSyA0fAmv-tC7X5_wTHpHsSpu6nyeqVLNYdw"
         }
       ],
       "services": {

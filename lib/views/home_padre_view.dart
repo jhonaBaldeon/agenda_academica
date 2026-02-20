@@ -185,6 +185,8 @@ class HomePadreView extends StatelessWidget {
             Text(
               curso.horario,
               style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
             ),
           ],
         ),

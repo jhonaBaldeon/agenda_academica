@@ -315,9 +315,13 @@ class CursosViewState extends State<CursosView> {
                   children: [
                     Icon(Icons.access_time, size: 16, color: Colors.grey[600]),
                     SizedBox(width: 4),
-                    Text(
-                      curso.horario,
-                      style: TextStyle(color: Colors.grey[700]),
+                    Expanded(
+                      child: Text(
+                        curso.horario,
+                        style: TextStyle(color: Colors.grey[700]),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
                   ],
                 ),

@@ -47,7 +47,7 @@ class DefaultFirebaseOptions {
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyDmr8sXgBq1cXqIfXkEG3a4ZpxTBpUTgw0',
+    apiKey: 'AIzaSyA0fAmv-tC7X5_wTHpHsSpu6nyeqVLNYdw',
     appId: '1:855737924458:android:385cf3ce5f585b81868313',
     messagingSenderId: '855737924458',
     projectId: 'agenda-academica-13682',
