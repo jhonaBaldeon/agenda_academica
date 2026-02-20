@@ -6,6 +6,7 @@ import '../viewmodels/auth_viewmodel.dart';
 import '../viewmodels/curso_viewmodel.dart';
 import 'cumplimiento_alumno_view.dart';
 import 'rendimiento_alumno_view.dart';
+import 'chatbot_view.dart';
 
 class HomePadreView extends StatelessWidget {
   const HomePadreView({super.key});
@@ -122,6 +123,19 @@ class HomePadreView extends StatelessWidget {
                 context,
                 MaterialPageRoute(
                   builder: (context) => RendimientoAlumnoView(),
+                ),
+              );
+            },
+          ),
+          ListTile(
+            leading: Icon(Icons.chat_bubble, color: Colors.blue.shade700),
+            title: Text('Chatbot'),
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const ChatbotView(),
                 ),
               );
             },
