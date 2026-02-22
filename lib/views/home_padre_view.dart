@@ -210,8 +210,8 @@ class HomePadreView extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: 8),
-                StreamBuilder<List<Actividad>>(
-                  stream: cursoVM.getActividadesStream(curso.id),
+                FutureBuilder<List<Actividad>>(
+                  future: cursoVM.getActividadesList(curso.id),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return Center(child: CircularProgressIndicator());

@@ -37,7 +37,6 @@ class CursosViewState extends State<CursosView> {
     final authVM = Provider.of<AuthViewModel>(context);
     final cursoVM = Provider.of<CursoViewModel>(context);
     final adminVM = Provider.of<AdminViewModel>(context);
-    final docenteId = authVM.user?.uid ?? '';
 
     return Scaffold(
       appBar: AppBar(
@@ -47,7 +46,7 @@ class CursosViewState extends State<CursosView> {
       ),
       drawer: _buildDrawer(context, authVM, adminVM),
       body: StreamBuilder<List<Curso>>(
-        stream: cursoVM.getCursosStream(docenteId),
+        stream: cursoVM.getAllCursosStream(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
@@ -67,13 +66,8 @@ class CursosViewState extends State<CursosView> {
                   Icon(Icons.school_outlined, size: 80, color: Colors.grey),
                   SizedBox(height: 16),
                   Text(
-                    'No tienes cursos creados',
+                    'No hay cursos disponibles',
                     style: TextStyle(fontSize: 18, color: Colors.grey[600]),
-                  ),
-                  SizedBox(height: 8),
-                  Text(
-                    'Presiona el botón + para agregar uno',
-                    style: TextStyle(color: Colors.grey[500]),
                   ),
                 ],
               ),
@@ -85,7 +79,7 @@ class CursosViewState extends State<CursosView> {
             itemCount: cursos.length,
             itemBuilder: (context, index) {
               final curso = cursos[index];
-              return _buildCursoCard(context, curso);
+              return _buildCursoCard(context, curso, adminVM.isAdmin);
             },
           );
         },
@@ -218,7 +212,7 @@ class CursosViewState extends State<CursosView> {
     );
   }
 
-  Widget _buildCursoCard(BuildContext context, Curso curso) {
+  Widget _buildCursoCard(BuildContext context, Curso curso, bool isAdmin) {
     final cursoVM = Provider.of<CursoViewModel>(context, listen: false);
 
     return Card(
@@ -265,38 +259,42 @@ class CursosViewState extends State<CursosView> {
                         ),
                       ),
                     ),
-                    PopupMenuButton<String>(
-                      icon: Icon(Icons.more_vert, color: Colors.grey[600]),
-                      onSelected: (value) {
-                        if (value == 'edit') {
-                          _showEditCursoDialog(context, curso);
-                        } else if (value == 'delete') {
-                          _showDeleteConfirmDialog(context, curso, cursoVM);
-                        }
-                      },
-                      itemBuilder: (context) => [
-                        PopupMenuItem(
-                          value: 'edit',
-                          child: Row(
-                            children: [
-                              Icon(Icons.edit, color: Colors.red.shade600),
-                              SizedBox(width: 8),
-                              Text('Editar'),
-                            ],
+                    if (isAdmin)
+                      PopupMenuButton<String>(
+                        icon: Icon(Icons.more_vert, color: Colors.grey[600]),
+                        onSelected: (value) {
+                          if (value == 'edit') {
+                            _showEditCursoDialog(context, curso);
+                          } else if (value == 'delete') {
+                            _showDeleteConfirmDialog(context, curso, cursoVM);
+                          }
+                        },
+                        itemBuilder: (context) => [
+                          PopupMenuItem(
+                            value: 'edit',
+                            child: Row(
+                              children: [
+                                Icon(Icons.edit, color: Colors.blue.shade700),
+                                SizedBox(width: 8),
+                                Text('Editar'),
+                              ],
+                            ),
                           ),
-                        ),
-                        PopupMenuItem(
-                          value: 'delete',
-                          child: Row(
-                            children: [
-                              Icon(Icons.delete, color: Colors.red),
-                              SizedBox(width: 8),
-                              Text('Eliminar'),
-                            ],
+                          PopupMenuItem(
+                            value: 'delete',
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.delete,
+                                  color: Colors.orange.shade700,
+                                ),
+                                SizedBox(width: 8),
+                                Text('Eliminar'),
+                              ],
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
+                        ],
+                      ),
                   ],
                 ),
                 SizedBox(height: 12),

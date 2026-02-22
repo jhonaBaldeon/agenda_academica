@@ -35,6 +35,33 @@ class SeguimientoActividad {
     required this.updatedAt,
   });
 
+  factory SeguimientoActividad.fromJson(Map<String, dynamic> json) {
+    return SeguimientoActividad(
+      id: json['id'] ?? '',
+      alumnoId: json['alumno_id'] ?? json['alumnoId'] ?? '',
+      alumnoNombre: json['alumno_nombre'] ?? json['alumnoNombre'] ?? '',
+      actividadId: json['actividad_id'] ?? json['actividadId'] ?? '',
+      actividadTitulo: json['actividad_titulo'] ?? json['actividadTitulo'] ?? '',
+      actividadDescripcion: json['actividad_descripcion'] ?? json['actividadDescripcion'] ?? '',
+      actividadFechaEntrega: json['actividad_fecha_entrega'] != null 
+          ? DateTime.tryParse(json['actividad_fecha_entrega'].toString()) ?? DateTime.now()
+          : DateTime.now(),
+      cursoId: json['curso_id'] ?? json['cursoId'] ?? '',
+      cursoNombre: json['curso_nombre'] ?? json['cursoNombre'] ?? '',
+      estado: _estadoFromString(json['estado'] ?? 'incompleto'),
+      fechaCompletado: json['fecha_completado'] != null 
+          ? DateTime.tryParse(json['fecha_completado'].toString())
+          : null,
+      observaciones: json['observaciones'],
+      createdAt: json['created_at'] != null 
+          ? DateTime.tryParse(json['created_at'].toString()) ?? DateTime.now()
+          : DateTime.now(),
+      updatedAt: json['updated_at'] != null 
+          ? DateTime.tryParse(json['updated_at'].toString()) ?? DateTime.now()
+          : DateTime.now(),
+    );
+  }
+
   factory SeguimientoActividad.fromFirestore(DocumentSnapshot doc) {
     Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
     return SeguimientoActividad(
@@ -70,6 +97,25 @@ class SeguimientoActividad {
       'observaciones': observaciones,
       'createdAt': Timestamp.fromDate(createdAt),
       'updatedAt': Timestamp.fromDate(updatedAt),
+    };
+  }
+  
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'alumno_id': alumnoId,
+      'alumno_nombre': alumnoNombre,
+      'actividad_id': actividadId,
+      'actividad_titulo': actividadTitulo,
+      'actividad_descripcion': actividadDescripcion,
+      'actividad_fecha_entrega': actividadFechaEntrega.toIso8601String(),
+      'curso_id': cursoId,
+      'curso_nombre': cursoNombre,
+      'estado': _estadoToString(estado),
+      'fecha_completado': fechaCompletado?.toIso8601String(),
+      'observaciones': observaciones,
+      'created_at': createdAt.toIso8601String(),
+      'updated_at': updatedAt.toIso8601String(),
     };
   }
 

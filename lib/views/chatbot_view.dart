@@ -37,12 +37,13 @@ class _ChatbotViewState extends State<ChatbotView> {
     final message = _messageController.text.trim();
     if (message.isEmpty) return;
 
-    _messageController.clear();
     setState(() {
       _isLoading = true;
     });
 
-    final response = await _chatService.sendMessage(message);
+    _messageController.clear();
+
+    await _chatService.sendMessage(message);
 
     setState(() {
       _isLoading = false;
@@ -193,9 +194,7 @@ class _ChatbotViewState extends State<ChatbotView> {
         ),
         child: Text(
           message,
-          style: TextStyle(
-            color: isUser ? Colors.white : Colors.black87,
-          ),
+          style: TextStyle(color: isUser ? Colors.white : Colors.black87),
         ),
       ),
     );

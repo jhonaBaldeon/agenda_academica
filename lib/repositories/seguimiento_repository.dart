@@ -1,68 +1,89 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:async';
 import '../models/seguimiento_actividad_model.dart';
+import '../services/api_service.dart';
 
 class SeguimientoRepository {
-  final FirebaseFirestore _db = FirebaseFirestore.instance;
+  final ApiService _api = ApiService();
+  
+  // Controlador para seguimientos
+  final _seguimientosController = StreamController<List<SeguimientoActividad>>.broadcast();
+  
+  // Obtener todos los seguimientos
+  Stream<List<SeguimientoActividad>> getAllSeguimientos() {
+    _refreshSeguimientos();
+    return _seguimientosController.stream;
+  }
+  
+  // Método para refrescar seguimientos
+  Future<void> _refreshSeguimientos({String? alumnoId, String? cursoId}) async {
+    try {
+      final seguimientos = await _api.getSeguimientos(
+        alumnoId: alumnoId, 
+        cursoId: cursoId,
+      );
+      _seguimientosController.add(seguimientos.map((s) => SeguimientoActividad.fromJson(s)).toList());
+    } catch (e) {
+      _seguimientosController.addError(e);
+    }
+  }
+
+  // Obtener todos los seguimientos como lista
+  Future<List<SeguimientoActividad>> getAllSeguimientosList() async {
+    final seguimientos = await _api.getSeguimientos();
+    return seguimientos.map((s) => SeguimientoActividad.fromJson(s)).toList();
+  }
+
+  // Crear seguimiento
+  Future<SeguimientoActividad> createSeguimiento(SeguimientoActividad seguimiento) async {
+    final data = await _api.createSeguimiento(seguimiento.toJson());
+    return SeguimientoActividad.fromJson(data);
+  }
 
   // Crear o actualizar seguimiento
   Future<SeguimientoActividad> createOrUpdateSeguimiento(SeguimientoActividad seguimiento) async {
     if (seguimiento.id.isEmpty) {
-      // Crear nuevo
-      final docRef = await _db.collection('seguimientos').add(seguimiento.toMap());
-      final doc = await docRef.get();
-      return SeguimientoActividad.fromFirestore(doc);
+      return createSeguimiento(seguimiento);
     } else {
-      // Actualizar existente
-      await _db.collection('seguimientos').doc(seguimiento.id).update(seguimiento.toMap());
-      final doc = await _db.collection('seguimientos').doc(seguimiento.id).get();
-      return SeguimientoActividad.fromFirestore(doc);
+      await updateSeguimiento(seguimiento.id, seguimiento.toJson());
+      final seguimientos = await getAllSeguimientosList();
+      return seguimientos.firstWhere((s) => s.id == seguimiento.id);
     }
   }
 
   // Obtener seguimientos por alumno
   Stream<List<SeguimientoActividad>> getSeguimientosByAlumno(String alumnoId) {
-    return _db
-        .collection('seguimientos')
-        .where('alumnoId', isEqualTo: alumnoId)
-        .orderBy('updatedAt', descending: true)
-        .snapshots()
-        .map((snapshot) => snapshot.docs.map((doc) => SeguimientoActividad.fromFirestore(doc)).toList());
+    _refreshSeguimientos(alumnoId: alumnoId);
+    return _seguimientosController.stream;
   }
 
   // Obtener seguimientos por curso
   Stream<List<SeguimientoActividad>> getSeguimientosByCurso(String cursoId) {
-    return _db
-        .collection('seguimientos')
-        .where('cursoId', isEqualTo: cursoId)
-        .orderBy('updatedAt', descending: true)
-        .snapshots()
-        .map((snapshot) => snapshot.docs.map((doc) => SeguimientoActividad.fromFirestore(doc)).toList());
+    _refreshSeguimientos(cursoId: cursoId);
+    return _seguimientosController.stream;
   }
 
   // Obtener seguimientos por alumno y curso
   Stream<List<SeguimientoActividad>> getSeguimientosByAlumnoAndCurso(String alumnoId, String cursoId) {
-    return _db
-        .collection('seguimientos')
-        .where('alumnoId', isEqualTo: alumnoId)
-        .where('cursoId', isEqualTo: cursoId)
-        .orderBy('updatedAt', descending: true)
-        .snapshots()
-        .map((snapshot) => snapshot.docs.map((doc) => SeguimientoActividad.fromFirestore(doc)).toList());
+    _refreshSeguimientos(alumnoId: alumnoId, cursoId: cursoId);
+    return _seguimientosController.stream;
   }
 
   // Obtener seguimiento específico por alumno y actividad
   Future<SeguimientoActividad?> getSeguimientoByAlumnoAndActividad(String alumnoId, String actividadId) async {
-    final snapshot = await _db
-        .collection('seguimientos')
-        .where('alumnoId', isEqualTo: alumnoId)
-        .where('actividadId', isEqualTo: actividadId)
-        .limit(1)
-        .get();
-    
-    if (snapshot.docs.isNotEmpty) {
-      return SeguimientoActividad.fromFirestore(snapshot.docs.first);
+    final seguimientos = await _api.getSeguimientos(alumnoId: alumnoId);
+    try {
+      return seguimientos
+          .map((s) => SeguimientoActividad.fromJson(s))
+          .firstWhere((s) => s.actividadId == actividadId);
+    } catch (e) {
+      return null;
     }
-    return null;
+  }
+
+  // Actualizar seguimiento
+  Future<void> updateSeguimiento(String seguimientoId, Map<String, dynamic> data) async {
+    await _api.updateSeguimiento(seguimientoId, data);
+    _refreshSeguimientos();
   }
 
   // Actualizar estado de seguimiento
@@ -79,15 +100,19 @@ class SeguimientoRepository {
         estadoString = 'incompleto';
     }
     
-    await _db.collection('seguimientos').doc(seguimientoId).update({
+    await _api.updateSeguimiento(seguimientoId, {
       'estado': estadoString,
-      'fechaCompletado': nuevoEstado == EstadoSeguimiento.completado ? Timestamp.fromDate(DateTime.now()) : null,
-      'updatedAt': Timestamp.fromDate(DateTime.now()),
+      'updated_at': DateTime.now().toIso8601String(),
     });
+    _refreshSeguimientos();
   }
 
   // Eliminar seguimiento
   Future<void> deleteSeguimiento(String seguimientoId) async {
-    await _db.collection('seguimientos').doc(seguimientoId).delete();
+    await _api.deleteSeguimiento(seguimientoId);
+  }
+
+  void dispose() {
+    _seguimientosController.close();
   }
 }

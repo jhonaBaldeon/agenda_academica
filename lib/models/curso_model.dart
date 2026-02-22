@@ -19,6 +19,20 @@ class Curso {
     required this.createdAt,
   });
 
+  factory Curso.fromJson(Map<String, dynamic> json) {
+    return Curso(
+      id: json['id'] ?? '',
+      nombreCurso: json['nombre_curso'] ?? json['nombreCurso'] ?? '',
+      nombreDocente: json['nombre_docente'] ?? json['nombreDocente'] ?? '',
+      horario: json['horario'] ?? '',
+      color: json['color'] ?? 0xFF2196F3,
+      docenteId: json['docente_id'] ?? json['docenteId'] ?? '',
+      createdAt: json['created_at'] != null 
+          ? DateTime.tryParse(json['created_at'].toString()) ?? DateTime.now()
+          : DateTime.now(),
+    );
+  }
+
   factory Curso.fromFirestore(DocumentSnapshot doc) {
     Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
     return Curso(
@@ -40,6 +54,18 @@ class Curso {
       'color': color,
       'docenteId': docenteId,
       'createdAt': Timestamp.fromDate(createdAt),
+    };
+  }
+  
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'nombre_curso': nombreCurso,
+      'nombre_docente': nombreDocente,
+      'horario': horario,
+      'color': color,
+      'docente_id': docenteId,
+      'created_at': createdAt.toIso8601String(),
     };
   }
 }

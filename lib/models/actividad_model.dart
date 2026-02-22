@@ -25,6 +25,23 @@ class Actividad {
     required this.createdAt,
   });
 
+  factory Actividad.fromJson(Map<String, dynamic> json) {
+    return Actividad(
+      id: json['id'] ?? '',
+      cursoId: json['curso_id'] ?? json['cursoId'] ?? '',
+      titulo: json['titulo'] ?? '',
+      descripcion: json['descripcion'] ?? '',
+      fechaEntrega: json['fecha_entrega'] != null 
+          ? DateTime.tryParse(json['fecha_entrega'].toString()) ?? DateTime.now()
+          : DateTime.now(),
+      prioridad: _prioridadFromString(json['prioridad'] ?? 'media'),
+      estado: _estadoFromString(json['estado'] ?? 'incompleto'),
+      createdAt: json['created_at'] != null 
+          ? DateTime.tryParse(json['created_at'].toString()) ?? DateTime.now()
+          : DateTime.now(),
+    );
+  }
+
   factory Actividad.fromFirestore(DocumentSnapshot doc) {
     Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
     return Actividad(
@@ -48,6 +65,19 @@ class Actividad {
       'prioridad': _prioridadToString(prioridad),
       'estado': _estadoToString(estado),
       'createdAt': Timestamp.fromDate(createdAt),
+    };
+  }
+  
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'curso_id': cursoId,
+      'titulo': titulo,
+      'descripcion': descripcion,
+      'fecha_entrega': fechaEntrega.toIso8601String(),
+      'prioridad': _prioridadToString(prioridad),
+      'estado': _estadoToString(estado),
+      'created_at': createdAt.toIso8601String(),
     };
   }
 

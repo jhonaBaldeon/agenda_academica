@@ -6,11 +6,15 @@ import '../viewmodels/curso_viewmodel.dart';
 class AgregarActividadView extends StatefulWidget {
   final String cursoId;
   final String cursoNombre;
+  final String cursoHorario;
+  final int cursoColor;
 
   const AgregarActividadView({
     super.key,
     required this.cursoId,
     required this.cursoNombre,
+    required this.cursoHorario,
+    required this.cursoColor,
   });
 
   @override
@@ -29,11 +33,12 @@ class AgregarActividadViewState extends State<AgregarActividadView> {
   @override
   Widget build(BuildContext context) {
     final cursoVM = Provider.of<CursoViewModel>(context);
+    final Color temaColor = Color(widget.cursoColor);
 
     return Scaffold(
       appBar: AppBar(
         title: Text('Agregar Actividad'),
-        backgroundColor: Colors.red.shade800,
+        backgroundColor: temaColor,
         foregroundColor: Colors.white,
       ),
       body: SingleChildScrollView(
@@ -48,7 +53,53 @@ class AgregarActividadViewState extends State<AgregarActividadView> {
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
-                  color: Colors.red.shade800,
+                  color: temaColor,
+                ),
+              ),
+              SizedBox(height: 12),
+              Container(
+                padding: EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: temaColor.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: temaColor.withValues(alpha: 0.3)),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(Icons.school, color: temaColor, size: 20),
+                        SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            widget.cursoNombre,
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: temaColor,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 8),
+                    Row(
+                      children: [
+                        Icon(Icons.access_time, color: temaColor, size: 20),
+                        SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            widget.cursoHorario,
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.grey[700],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
               ),
               SizedBox(height: 20),
@@ -242,7 +293,7 @@ class AgregarActividadViewState extends State<AgregarActividadView> {
                                   content: Text(
                                     'Actividad creada exitosamente',
                                   ),
-                                  backgroundColor: Colors.red.shade600,
+                                  backgroundColor: temaColor,
                                 ),
                               );
                               // ignore: use_build_context_synchronously
@@ -259,7 +310,7 @@ class AgregarActividadViewState extends State<AgregarActividadView> {
                           }
                         },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red.shade800,
+                    backgroundColor: temaColor,
                     foregroundColor: Colors.white,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),

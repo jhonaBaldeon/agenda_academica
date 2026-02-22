@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/curso_model.dart';
 import '../models/actividad_model.dart';
 import '../repositories/curso_repository.dart';
@@ -31,6 +30,14 @@ class CursoViewModel extends ChangeNotifier {
 
   Stream<List<Actividad>> getActividadesStream(String cursoId) {
     return _repository.getActividadesByCurso(cursoId);
+  }
+
+  Stream<List<Actividad>> getActividadesStreamByCourse(String cursoId) {
+    return _repository.getActividadesStreamByCurso(cursoId);
+  }
+
+  Future<List<Actividad>> getActividadesList(String cursoId) {
+    return _repository.getActividadesList(cursoId);
   }
 
   Future<void> createCurso({
@@ -111,6 +118,7 @@ class CursoViewModel extends ChangeNotifier {
           cursoId: cursoId,
           cursoNombre: cursoNombre,
         );
+        _seguimientoVM.refreshSeguimientos();
       }
     } catch (e) {
       _error = 'Error al crear actividad: $e';
@@ -120,6 +128,7 @@ class CursoViewModel extends ChangeNotifier {
   }
 
   Future<void> updateActividad({
+    required String cursoId,
     required String actividadId,
     String? titulo,
     String? descripcion,
@@ -134,7 +143,7 @@ class CursoViewModel extends ChangeNotifier {
       if (titulo != null) data['titulo'] = titulo;
       if (descripcion != null) data['descripcion'] = descripcion;
       if (fechaEntrega != null) {
-        data['fechaEntrega'] = Timestamp.fromDate(fechaEntrega);
+        data['fecha_entrega'] = fechaEntrega.toIso8601String();
       }
       if (prioridad != null) {
         String prioridadString;
@@ -151,7 +160,8 @@ class CursoViewModel extends ChangeNotifier {
         data['prioridad'] = prioridadString;
       }
 
-      await _repository.updateActividad(actividadId, data);
+      await _repository.updateActividad(cursoId, actividadId, data);
+      _seguimientoVM.refreshSeguimientos();
     } catch (e) {
       _error = 'Error al actualizar actividad: $e';
     } finally {
@@ -159,12 +169,13 @@ class CursoViewModel extends ChangeNotifier {
     }
   }
 
-  Future<void> deleteActividad(String actividadId) async {
+  Future<void> deleteActividad(String cursoId, String actividadId) async {
     _setLoading(true);
     _error = null;
 
     try {
-      await _repository.deleteActividad(actividadId);
+      await _repository.deleteActividad(cursoId, actividadId);
+      _seguimientoVM.refreshSeguimientos();
     } catch (e) {
       _error = 'Error al eliminar actividad: $e';
     } finally {
@@ -190,6 +201,7 @@ class CursoViewModel extends ChangeNotifier {
       if (color != null) data['color'] = color;
 
       await _repository.updateCurso(cursoId, data);
+      _seguimientoVM.refreshSeguimientos();
     } catch (e) {
       _error = 'Error al actualizar curso: $e';
     } finally {
@@ -203,6 +215,7 @@ class CursoViewModel extends ChangeNotifier {
 
     try {
       await _repository.deleteCurso(cursoId);
+      _seguimientoVM.refreshSeguimientos();
     } catch (e) {
       _error = 'Error al eliminar curso: $e';
     } finally {

@@ -127,6 +127,8 @@ class DetalleCursoView extends StatelessWidget {
               builder: (context) => AgregarActividadView(
                 cursoId: curso.id,
                 cursoNombre: curso.nombreCurso,
+                cursoHorario: curso.horario,
+                cursoColor: curso.color,
               ),
             ),
           );
@@ -205,7 +207,7 @@ class DetalleCursoView extends StatelessWidget {
                       value: 'edit',
                       child: Row(
                         children: [
-                          Icon(Icons.edit, color: Colors.red.shade600),
+                          Icon(Icons.edit, color: Colors.blue.shade700),
                           SizedBox(width: 8),
                           Text('Editar'),
                         ],
@@ -215,7 +217,7 @@ class DetalleCursoView extends StatelessWidget {
                       value: 'delete',
                       child: Row(
                         children: [
-                          Icon(Icons.delete, color: Colors.red),
+                          Icon(Icons.delete, color: Colors.orange.shade700),
                           SizedBox(width: 8),
                           Text('Eliminar'),
                         ],
@@ -364,7 +366,7 @@ class DetalleCursoView extends StatelessWidget {
                       context,
                       PrioridadActividad.baja,
                       'Baja',
-                      Colors.red.shade400,
+                      Colors.green,
                       prioridad == PrioridadActividad.baja,
                       (value) => setState(() => prioridad = value),
                     ),
@@ -389,6 +391,7 @@ class DetalleCursoView extends StatelessWidget {
                 );
 
                 await cursoVM.updateActividad(
+                  cursoId: curso.id,
                   actividadId: actividad.id,
                   titulo: tituloController.text,
                   descripcion: descripcionController.text,
@@ -484,7 +487,7 @@ class DetalleCursoView extends StatelessWidget {
           ),
           ElevatedButton(
             onPressed: () async {
-              await cursoVM.deleteActividad(actividad.id);
+              await cursoVM.deleteActividad(curso.id, actividad.id);
               // ignore: use_build_context_synchronously
               Navigator.pop(context);
 

@@ -30,6 +30,22 @@ class SeguimientoViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  // Refresh seguimientos
+  void refreshSeguimientos() {
+    _refreshData();
+    notifyListeners();
+  }
+
+  Future<void> _refreshData() async {
+    try {
+      final seguimientos = await _repository.getAllSeguimientosList();
+      _seguimientos.clear();
+      _seguimientos.addAll(seguimientos);
+    } catch (e) {
+      _error = e.toString();
+    }
+  }
+
   // Obtener seguimientos filtrados
   Stream<List<SeguimientoActividad>> getSeguimientosStream() {
     if (_alumnoIdSeleccionado != null && _cursoIdSeleccionado != null) {
