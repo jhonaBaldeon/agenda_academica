@@ -263,27 +263,6 @@ class HomePadreView extends StatelessWidget {
         prioridadTexto = 'Media';
     }
 
-    Color estadoColor;
-    String estadoTexto;
-    IconData estadoIcono;
-
-    switch (actividad.estado) {
-      case EstadoActividad.completado:
-        estadoColor = Colors.green;
-        estadoTexto = 'Completado';
-        estadoIcono = Icons.check_circle;
-        break;
-      case EstadoActividad.noRealizado:
-        estadoColor = Colors.red;
-        estadoTexto = 'No Realizado';
-        estadoIcono = Icons.cancel;
-        break;
-      default:
-        estadoColor = Colors.orange;
-        estadoTexto = 'Incompleto';
-        estadoIcono = Icons.timelapse;
-    }
-
     return Container(
       margin: EdgeInsets.only(bottom: 8),
       padding: EdgeInsets.all(12),
@@ -335,17 +314,6 @@ class HomePadreView extends StatelessWidget {
               Text(
                 'Entrega: ${_formatFecha(actividad.fechaEntrega)}',
                 style: TextStyle(fontSize: 12, color: Colors.grey[600]),
-              ),
-              Spacer(),
-              Icon(estadoIcono, size: 14, color: estadoColor),
-              SizedBox(width: 4),
-              Text(
-                estadoTexto,
-                style: TextStyle(
-                  fontSize: 12,
-                  color: estadoColor,
-                  fontWeight: FontWeight.bold,
-                ),
               ),
             ],
           ),

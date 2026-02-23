@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 enum EstadoSeguimiento { completado, incompleto, noRealizado }
 
+enum PrioridadActividad { alta, media, baja }
+
 class SeguimientoActividad {
   final String id;
   final String alumnoId;
@@ -10,6 +12,7 @@ class SeguimientoActividad {
   final String actividadTitulo;
   final String actividadDescripcion;
   final DateTime actividadFechaEntrega;
+  final PrioridadActividad actividadPrioridad;
   final String cursoId;
   final String cursoNombre;
   final EstadoSeguimiento estado;
@@ -26,6 +29,7 @@ class SeguimientoActividad {
     required this.actividadTitulo,
     required this.actividadDescripcion,
     required this.actividadFechaEntrega,
+    this.actividadPrioridad = PrioridadActividad.media,
     required this.cursoId,
     required this.cursoNombre,
     this.estado = EstadoSeguimiento.incompleto,
@@ -46,6 +50,7 @@ class SeguimientoActividad {
       actividadFechaEntrega: json['actividad_fecha_entrega'] != null 
           ? DateTime.tryParse(json['actividad_fecha_entrega'].toString()) ?? DateTime.now()
           : DateTime.now(),
+      actividadPrioridad: _prioridadFromString(json['actividad_prioridad'] ?? 'media'),
       cursoId: json['curso_id'] ?? json['cursoId'] ?? '',
       cursoNombre: json['curso_nombre'] ?? json['cursoNombre'] ?? '',
       estado: _estadoFromString(json['estado'] ?? 'incompleto'),
@@ -72,6 +77,7 @@ class SeguimientoActividad {
       actividadTitulo: data['actividadTitulo'] ?? '',
       actividadDescripcion: data['actividadDescripcion'] ?? '',
       actividadFechaEntrega: (data['actividadFechaEntrega'] as Timestamp?)?.toDate() ?? DateTime.now(),
+      actividadPrioridad: _prioridadFromString(data['actividadPrioridad'] ?? 'media'),
       cursoId: data['cursoId'] ?? '',
       cursoNombre: data['cursoNombre'] ?? '',
       estado: _estadoFromString(data['estado'] ?? 'incompleto'),
@@ -90,6 +96,7 @@ class SeguimientoActividad {
       'actividadTitulo': actividadTitulo,
       'actividadDescripcion': actividadDescripcion,
       'actividadFechaEntrega': Timestamp.fromDate(actividadFechaEntrega),
+      'actividadPrioridad': _prioridadToString(actividadPrioridad),
       'cursoId': cursoId,
       'cursoNombre': cursoNombre,
       'estado': _estadoToString(estado),
@@ -109,6 +116,7 @@ class SeguimientoActividad {
       'actividad_titulo': actividadTitulo,
       'actividad_descripcion': actividadDescripcion,
       'actividad_fecha_entrega': actividadFechaEntrega.toIso8601String(),
+      'actividad_prioridad': _prioridadToString(actividadPrioridad),
       'curso_id': cursoId,
       'curso_nombre': cursoNombre,
       'estado': _estadoToString(estado),
@@ -141,6 +149,28 @@ class SeguimientoActividad {
     }
   }
 
+  static PrioridadActividad _prioridadFromString(String value) {
+    switch (value) {
+      case 'alta':
+        return PrioridadActividad.alta;
+      case 'baja':
+        return PrioridadActividad.baja;
+      default:
+        return PrioridadActividad.media;
+    }
+  }
+
+  static String _prioridadToString(PrioridadActividad prioridad) {
+    switch (prioridad) {
+      case PrioridadActividad.alta:
+        return 'alta';
+      case PrioridadActividad.baja:
+        return 'baja';
+      default:
+        return 'media';
+    }
+  }
+
   SeguimientoActividad copyWith({
     String? id,
     String? alumnoId,
@@ -149,6 +179,7 @@ class SeguimientoActividad {
     String? actividadTitulo,
     String? actividadDescripcion,
     DateTime? actividadFechaEntrega,
+    PrioridadActividad? actividadPrioridad,
     String? cursoId,
     String? cursoNombre,
     EstadoSeguimiento? estado,
@@ -165,6 +196,7 @@ class SeguimientoActividad {
       actividadTitulo: actividadTitulo ?? this.actividadTitulo,
       actividadDescripcion: actividadDescripcion ?? this.actividadDescripcion,
       actividadFechaEntrega: actividadFechaEntrega ?? this.actividadFechaEntrega,
+      actividadPrioridad: actividadPrioridad ?? this.actividadPrioridad,
       cursoId: cursoId ?? this.cursoId,
       cursoNombre: cursoNombre ?? this.cursoNombre,
       estado: estado ?? this.estado,

@@ -281,6 +281,22 @@ class _CumplimientoAlumnoViewState extends State<CumplimientoAlumnoView> {
         estadoIcono = Icons.timelapse;
     }
 
+    Color prioridadColor;
+    String prioridadTexto;
+    switch (seguimiento.actividadPrioridad) {
+      case PrioridadActividad.alta:
+        prioridadColor = Colors.red;
+        prioridadTexto = 'Alta';
+        break;
+      case PrioridadActividad.baja:
+        prioridadColor = Colors.green;
+        prioridadTexto = 'Baja';
+        break;
+      default:
+        prioridadColor = Colors.orange;
+        prioridadTexto = 'Media';
+    }
+
     return Card(
       margin: EdgeInsets.only(bottom: 12),
       elevation: 3,
@@ -320,7 +336,7 @@ class _CumplimientoAlumnoViewState extends State<CumplimientoAlumnoView> {
             ),
             SizedBox(height: 12),
             Divider(),
-            // Fecha de entrega y estado
+            // Fecha de entrega, prioridad y estado
             Row(
               children: [
                 Icon(Icons.calendar_today, size: 16, color: Colors.grey[600]),
@@ -328,6 +344,27 @@ class _CumplimientoAlumnoViewState extends State<CumplimientoAlumnoView> {
                 Text(
                   'Entrega: ${_formatFecha(seguimiento.actividadFechaEntrega)}',
                   style: TextStyle(color: Colors.grey[600], fontSize: 12),
+                ),
+              ],
+            ),
+            SizedBox(height: 8),
+            Row(
+              children: [
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: prioridadColor.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: prioridadColor),
+                  ),
+                  child: Text(
+                    'Prioridad: $prioridadTexto',
+                    style: TextStyle(
+                      color: prioridadColor,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 11,
+                    ),
+                  ),
                 ),
                 Spacer(),
                 Container(
